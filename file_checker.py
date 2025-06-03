@@ -1,3 +1,4 @@
+import os
 import requests
 
 def check_url(api_key, url):
@@ -10,23 +11,23 @@ def check_url(api_key, url):
     try:
         # Make the API request
         response = requests.get(api_url, params=params)
-        result = response.json()
+        scan_report = response.json()
 
         # Check the response code
         if response.status_code == 200:
             # Check if the URL is malicious or not
-            if result['response_code'] == 1:
-                print(f"The URL '{url}' is rated as {result['positives']} malicious out of {result['total']} scanners.")
+            if scan_report['response_code'] == 1:
+                print(f"The URL '{url}' is rated as {scan_report['positives']} malicious out of {scan_report['total']} scanners.")
                 
                 # Print detailed information about individual scan engines
                 print("Individual Scan Engine Results:")
-                for scan_engine, result in result['scans'].items():
-                    print(f"{scan_engine}: {result['result']}")
+                for scan_engine, scan_result in scan_report['scans'].items():
+                    print(f"{scan_engine}: {scan_result['result']}")
 
             else:
                 print(f"The URL '{url}' is not detected as malicious by any scanners.")
         else:
-            print(f"Error: {result['verbose_msg']}")
+            print(f"Error: {scan_report['verbose_msg']}")
 
     except Exception as e:
         print(f"Error: {str(e)}")
